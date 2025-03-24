@@ -19,7 +19,7 @@ def fetch_shiller_pe_data():
             print(df.head())  # make sure we extract data correctly
 
             # write CSV
-            output_file = 'shiller_pe_data.csv'
+            output_file = 'shiller_pe_ratio/shiller_pe_data.csv'
             df.to_csv(output_file, index=False)
             print(f"Shiller P/E data saved to {output_file}")
         else:
