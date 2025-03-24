@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Debug repository structure
-        run: ls -R  # Lists all files to verify script location
+        run: ls -R  # verify script location
       
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -21,15 +21,15 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install --no-cache-dir -r requirements.txt
+          pip install --no-cache-dir -r supply_chain_pressure/requirements.txt
       
       - name: Fetch GSCPI data
-        run: python fetch_gscpi.py
+        run: python supply_chain_pressure/fetch_gscpi.py
       
       - name: Commit and push data
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add gscpi_data.csv
+          git add supply_chain_pressure/gscpi_data.csv
           git commit -m 'Update GSCPI data' || echo 'No changes to commit'
           git push

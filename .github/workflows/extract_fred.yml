@@ -27,12 +27,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r fred_data/requirements.txt
 
       - name: Run Python script
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-        run: python fetch_fred_data.py
+        run: python fred_data/fetch_fred_data.py
 
       - name: Commit and Push Changes
         env:
@@ -59,7 +59,7 @@ jobs:
           fi
 
           # add and commit new data, if there are changes
-          git add fred_data.csv
+          git add fred_data/fred_data.csv
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
