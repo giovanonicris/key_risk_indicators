@@ -1,0 +1,72 @@
+name: Extract FRED data
+
+on:
+  # runs daily at 5AM EST
+  schedule:
+    - cron: '0 10 * * *'  
+  workflow_dispatch:  # for manual runs
+
+permissions:
+  contents: write  # give write permission
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # avoid using default token
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Python script
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python fetch_fred_data.py
+
+      - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # stash local changes before pull
+          if ! git diff --quiet; then
+            echo "Stashing local changes..."
+            git stash push -m "Auto-stash before rebase"
+          fi
+
+          # check that we're on latest main branch before commit
+          git fetch origin main
+          git checkout main
+          git pull --rebase origin main
+
+          # restore stashed changes, if exists
+          if git stash list | grep -q "Auto-stash before rebase"; then
+            echo "Applying stashed changes..."
+            git stash pop
+          fi
+
+          # add and commit new data, if there are changes
+          git add fred_data.csv
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Updated fred_data.csv with latest FRED metrics"
+
+          # explicitly authenticate push using GitHub Token authomatically 
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git push origin main
