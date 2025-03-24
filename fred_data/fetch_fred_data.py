@@ -85,7 +85,7 @@ for col in percentages:
         df_new[col] /= 100
 
 # prep for writing
-csv_path = "fred_data.csv"
+csv_path = "fred_data/fred_data.csv"
 if os.path.exists(csv_path):
     df_old = pd.read_csv(csv_path, parse_dates=["Date"])
     
