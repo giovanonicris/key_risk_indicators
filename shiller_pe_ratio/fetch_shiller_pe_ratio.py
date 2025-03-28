@@ -2,6 +2,9 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 
+#set appropriate KRI ID for this dataset
+kri_id = 13
+
 # URL from multpl.com Shiller P/E page
 url = 'https://www.multpl.com/shiller-pe/table/by-year'
 
@@ -17,7 +20,7 @@ def fetch_shiller_pe_data():
         if table:
             df = pd.read_html(str(table))[0]
             print(df.head())  # make sure we extract data correctly
-
+            df["KEY_RISK_INDICATOR_ID"] = kri_id
             # write CSV
             output_file = 'shiller_pe_ratio/shiller_pe_data.csv'
             df.to_csv(output_file, index=False)
