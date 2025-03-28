@@ -106,5 +106,9 @@ if os.path.exists(csv_path):
 else:
     df_combined = df_new
 
+# drop records older than 6 years
+df["Date"] = pd.to_datetime(df["Date"])
+df_combined = df_combined[df_combined["Date"] >= pd.Timestamp.today() - pd.DateOffset(years=6)]
+
 #write to csv
 df_combined.to_csv(csv_path, index=False)
