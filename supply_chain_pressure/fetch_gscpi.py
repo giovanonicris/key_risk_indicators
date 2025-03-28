@@ -2,6 +2,9 @@ import requests
 import pandas as pd
 from io import BytesIO
 
+# set KRI ID
+kri_id = 4
+
 # URL of the GSCPI data file
 gscpi_url = 'https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx'
 
@@ -20,6 +23,7 @@ def download_gscpi_data():
         df = df.iloc[:, :2]
         df.columns = ["Date", "GSCPI"]
         df = df.dropna(how='all')
+        df["KEY_RISK_INDICATOR_ID"] = kri_id
         
         # write CSV file to repo
         output_file = 'supply_chain_pressure/gscpi_data.csv'
