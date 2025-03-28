@@ -1,0 +1,43 @@
+KEY_RISK_INDICATOR_ID,KEY_RISK_INDICATOR
+1,US Commercial Real Estate Prices
+2,S&P CoreLogic Case-Shiller US National Home Price Index
+3,30-Yr Fixed Rate Mortgage Average
+4,Global Supply Chain Pressure Index (GSCPI)
+5,Federal Funds Effective Rate
+6,10-YR Treasury Constant Maturity
+7,10-YR Treasury Yield
+8,Consumer Price Index
+9,Annual Inflation
+10,Producer Price Index
+11,Real GDP Growth Rate
+12,Gross Domestic Product
+13,Shiller P/E Ratio
+14,Employment Level
+15,US Unemployment Rate
+16,US Unemployment Level
+17,US Job Openings
+18,US Voluntary Separations (Quits)
+19,US Job Openings (Information)
+20,US Job Openings (Finance and Insurance)
+21,US Job Openings (Professional and Business Services)
+22,Quits (Information)
+23,Quits (Finance and Insurance)
+24,Quits (Professional and Business Services)
+25,Unemployment Rate (Information)
+26,Unemployment Rate (Finance and Insurance)
+27,Unemployment Rate (Professional and Business Services)
+28,12-Month Moving Average of Unweighted Median Hourly Wate Growth (Overall)
+29,12-Month Moving Average of Unweighted Median Hourly Wage Growth (Stayer)
+30,12-Month Moving Average of Unweighted Median Hourly Wate Growth (Switcher)
+31,ICE BofA US High Yield Index Total Return Index Value
+32,CBOE Volatility Index VIX
+33,St Louis Fed Financial Stress Index
+34,Chicago Fed National Financial Conditions Index
+35,US Presidential Polls
+36,Black Rock Geopolitical Risk Indicator
+37,Supreme Court Decisions
+38,Military Conflict over Taiwan
+39,Gulf Tensions
+40,Number of SEC Regulations
+41,Iacoviello Geopolitical Risk Index
+42,US - China Strategic Competition
