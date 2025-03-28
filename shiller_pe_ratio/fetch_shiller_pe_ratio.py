@@ -19,8 +19,10 @@ def fetch_shiller_pe_data():
         table = soup.find('table')
         if table:
             df = pd.read_html(str(table))[0]
-            print(df.head())  # make sure we extract data correctly
+            print(df.head())  # peek into data, if extracted correctly
+            df.rename(columns={df.columns[1]: "Shiller PE Ratio"}, inplace=True)
             df["KEY_RISK_INDICATOR_ID"] = kri_id
+            
             # write CSV
             output_file = 'shiller_pe_ratio/shiller_pe_data.csv'
             df.to_csv(output_file, index=False)
