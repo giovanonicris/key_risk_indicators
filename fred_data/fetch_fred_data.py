@@ -2,16 +2,21 @@ import os
 import pandas as pd
 from fredapi import Fred
 
+# load FRED key
 fred_api_key = os.getenv("FRED_API_KEY")
 if not fred_api_key:
     raise ValueError("Problem with FRED_API_KEY.")
 
 fred = Fred(api_key=fred_api_key)
 
+# load kri mapping
+kri_df = pd.read_csv("key_risk_indicators/kri_list.csv")
+name_to_id = dict(zip(kri_df["KEY_RISK_INDICATOR"], kri_df["KEY_RISK_INDICATOR_ID"]))
+
 # define Start Date
 start_date = "2020-01-01"
 
-# define series and categories
+# define series and names
 data_series = {
     "Labor": {
         "series": ["UNRATE", "UNEMPLOY", "JTSJOL", "JTSQUL", "JTU5100JOL",
@@ -52,14 +57,17 @@ data_series = {
 df_new = pd.DataFrame()
 for category, details in data_series.items():
     for series, name in zip(details["series"], details["names"]):
+        kri_id = name_to_id.get(name)
+        if kri_id is None:
+            continue  # skip if no ID match
         temp_data = fred.get_series(series, observation_start=start_date)
-        temp_data = temp_data.to_frame(name)
+        temp_data = temp_data.to_frame(name=kri_id)  # use KRI ID as column name
         df_new = pd.merge(df_new, temp_data, left_index=True, right_index=True, how="outer")
-
-# apply data transformations
+        
 df_new.reset_index(inplace=True)
 df_new.rename(columns={"index": "Date"}, inplace=True)
 
+# apply data transformations
 multipliers = {
     "US Unemployment Level": 1000, "US Job Openings": 1000, "US Voluntary Separations (Quits)": 1000,
     "US Job Openings (Information)": 1000, "US Job Openings (Finance and Insurance)": 1000,
@@ -76,27 +84,29 @@ percentages = [
     "10-Year Treasury Yields"
 ]
 
-# apply conversions
-for col, multiplier in multipliers.items():
-    if col in df_new.columns:
-        df_new[col] *= multiplier
-for col in percentages:
-    if col in df_new.columns:
-        df_new[col] /= 100
+# convert using IDs
+for name, multiplier in multipliers.items():
+    col_id = name_to_id.get(name)
+    if col_id and col_id in df_new.columns:
+        df_new[col_id] *= multiplier
 
-# prep for writing
-csv_path = "fred_data/fred_data.csv"
-if os.path.exists(csv_path):
-    df_old = pd.read_csv(csv_path, parse_dates=["Date"])
-    
-    # merge old and new to prevent duplicates
-    df_combined = pd.concat([df_old, df_new], ignore_index=True)
-    df_combined.drop_duplicates(subset=["Date"], keep="last", inplace=True)
-else:
-    df_combined = df_new
+for name in percentages:
+    col_id = name_to_id.get(name)
+    if col_id and col_id in df_new.columns:
+        df_new[col_id] /= 100
 
-# write data to CSV
-df_combined["LAST_RUN_TIMESTAMP"] = pd.Timestamp.utcnow()
-df_combined.to_csv(csv_path, index=False, encoding="utf-8")
+# # generate wide form
+# csv_path = "fred_data/fred_data.csv"
+# if os.path.exists(csv_path):
+#     df_old = pd.read_csv(csv_path, parse_dates=["Date"])
+#     df_combined = pd.concat([df_old, df_new], ignore_index=True)
+#     df_combined.drop_duplicates(subset=["Date"], keep="last", inplace=True)
+# else:
+#     df_combined = df_new
 
-print(f"Updated {csv_path} with new data.")
+# unpivot to long-form
+df_long = df_combined.melt(id_vars="Date", var_name="KEY_RISK_INDICATOR_ID", value_name="Value")
+df_long["KEY_RISK_INDICATOR_ID"] = df_long["KEY_RISK_INDICATOR_ID"].astype(int)
+
+# write to file
+df_long.to_csv("fred_data/fred_normalized.csv", index=False)
