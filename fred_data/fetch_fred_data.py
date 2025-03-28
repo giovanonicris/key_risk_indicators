@@ -95,14 +95,14 @@ for name in percentages:
     if col_id and col_id in df_new.columns:
         df_new[col_id] /= 100
 
-# # generate wide form
-# csv_path = "fred_data/fred_data.csv"
-# if os.path.exists(csv_path):
-#     df_old = pd.read_csv(csv_path, parse_dates=["Date"])
-#     df_combined = pd.concat([df_old, df_new], ignore_index=True)
-#     df_combined.drop_duplicates(subset=["Date"], keep="last", inplace=True)
-# else:
-#     df_combined = df_new
+# generate wide form
+csv_path = "fred_data/fred_data.csv"
+if os.path.exists(csv_path):
+    df_old = pd.read_csv(csv_path, parse_dates=["Date"])
+    df_combined = pd.concat([df_old, df_new], ignore_index=True)
+    df_combined.drop_duplicates(subset=["Date"], keep="last", inplace=True)
+else:
+    df_combined = df_new
 
 # unpivot to long-form
 df_long = df_combined.melt(id_vars="Date", var_name="KEY_RISK_INDICATOR_ID", value_name="Value")
