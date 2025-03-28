@@ -10,7 +10,7 @@ if not fred_api_key:
 fred = Fred(api_key=fred_api_key)
 
 # load kri mapping
-kri_df = pd.read_csv("key_risk_indicators/kri_list.csv")
+kri_df = pd.read_csv("fred_data/kri_list.csv")
 name_to_id = dict(zip(kri_df["KEY_RISK_INDICATOR"], kri_df["KEY_RISK_INDICATOR_ID"]))
 
 # define Start Date
