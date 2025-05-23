@@ -1,13 +1,20 @@
 import pandas as pd
+import os
 
-# get ny fed yield curve recession probability
-def get_nyfed_yield_curve_prob():
-    url = 'https://www.newyorkfed.org/medialibrary/media/research/capital_markets/Prob_Rec.csv'
+kri_id = 105
+url = 'https://www.newyorkfed.org/medialibrary/media/research/capital_markets/Prob_Rec.csv'
+
+def fetch_nyfed_yield_curve_prob():
     df = pd.read_csv(url, skiprows=4)
     df = df.rename(columns=lambda x: x.strip())
     df['DATE'] = pd.to_datetime(df['DATE'], errors='coerce')
-    latest = df.dropna().sort_values('DATE', ascending=False).head(1)
-    print(latest[['DATE', 'P(REC)']])
+    df = df.dropna(subset=['DATE', 'P(REC)'])
+    df = df[['DATE', 'P(REC)']]
+    df["KEY_RISK_INDICATOR_ID"] = kri_id
+    output_file = 'nyfed_yield_curve_model/nyfed_yield_curve_prob.csv'
+    os.makedirs('nyfed_yield_curve_model', exist_ok=True)
+    df.to_csv(output_file, index=False)
+    print(f"NY Fed yield curve model data saved to {output_file}")
 
-if __name__ == '__main__':
-    get_nyfed_yield_curve_prob()
+if __name__ == "__main__":
+    fetch_nyfed_yield_curve_prob()
