@@ -1,0 +1,67 @@
+name: Pull KRI Data 1
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 5 AM Eastern = 9 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Needed for pushing CSV changes
+
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run fetch_us_epu.py
+        run: |
+          echo "Running fetch_us_epu.py"
+          python epu/fetch_us_epu.py || echo "fetch_us_epu.py failed."
+
+      - name: Run fetch_ism_supplier_deliveries.py
+        run: |
+          echo "Running fetch_ism_supplier_deliveries.py"
+          python fred_supplier_deliveries_index/fetch_ism_supplier_deliveries.py || echo "fetch_ism_supplier_deliveries.py failed."
+
+      - name: Run fetch_fred_t10y2y.py
+        run: |
+          echo "Running fetch_fred_t10y2y.py"
+          python fred_t10y2y_yield_curve/fetch_fred_t10y2y.py || echo "fetch_fred_t10y2y.py failed."
+
+      - name: Run get_gdelt_geopolitical_tensions_tone.py
+        run: |
+          echo "Running get_gdelt_geopolitical_tensions_tone.py"
+          python gdelt_geopolitical_tensions/get_gdelt_geopolitical_tensions_tone.py || echo "get_gdelt_geopolitical_tensions_tone.py failed."
+
+      - name: Run fetch_nyfed_yield_curve_probability.py
+        run: |
+          echo "Running fetch_nyfed_yield_curve_probability.py"
+          python nyfed_yield_curve_model/fetch_nyfed_yield_curve_probability.py || echo "fetch_nyfed_yield_curve_probability.py failed."
+
+      - name: Run fetch_fred_vix.py
+        run: |
+          echo "Running fetch_fred_vix.py"
+          python vix_index/fetch_fred_vix.py || echo "fetch_fred_vix.py failed."
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add .
+          git commit -m "Update risk indicator CSVs [skip ci]" || echo "No changes to commit"
+          git push || echo "No changes pushed"
