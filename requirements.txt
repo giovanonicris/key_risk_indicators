@@ -10,3 +10,5 @@ openpyxl
 xlrd>=2.0.1
 beautifulsoup4
 lxml
+python-dotenv
+google-cloud-bigquery
