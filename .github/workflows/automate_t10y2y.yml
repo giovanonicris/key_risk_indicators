@@ -12,6 +12,8 @@ permissions:
 jobs:
   fetch-gscpi-data:
     runs-on: ubuntu-latest
+    env:
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

@@ -12,6 +12,8 @@ permissions:
 jobs:
   fetch-gscpi-data:
     runs-on: ubuntu-latest
+    env:
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -30,13 +32,13 @@ jobs:
           pip install --no-cache-dir -r requirements.txt
       
       - name: Get VIX data
-        run: python vix/get_vix.py
+        run: python fred_vix/get_vix.py
       
       - name: Commit and push data
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add vix/vix_data.csv
+          git add fred_vix/vix_data.csv
           git commit -m 'Update data' || echo 'No changes to commit'
           git pull --rebase origin main
           git push
