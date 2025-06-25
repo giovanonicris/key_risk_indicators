@@ -1,9 +1,9 @@
 name: Run GPR
 
 on:
-  # runs daily at 5AM EST
+  # runs daily at 5:05 AM EST
   schedule:
-    - cron: '0 10 * * *'  
+    - cron: '5 10 * * *'  
   workflow_dispatch:  # for manual runs
 
 permissions:
