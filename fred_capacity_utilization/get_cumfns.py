@@ -15,5 +15,5 @@ isrm_data = fred.get_series('CUMFNS')
 isrm_df = isrm_data.reset_index()
 isrm_df.columns = ['DATE', 'CUMFNS']
 isrm_df["KEY_RISK_INDICATOR_ID"] = kri_id
-isrm_df.to_csv("fred_supplier_deliveries_index/cumfns.csv", index=False)
+isrm_df.to_csv("fred_capacity_utilization/cumfns.csv", index=False)
 print("Updated cumfns.csv")
