@@ -30,7 +30,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Get GPR data
-        run: python get_gpr.py
+        run: python gpr/get_gpr.py
 
       - name: Commit and push data
         run: |

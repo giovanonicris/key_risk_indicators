@@ -1,20 +1,41 @@
 import pandas as pd
 import os
+import requests
 
-kri_id = 105
-url = 'https://www.newyorkfed.org/medialibrary/media/research/capital_markets/Prob_Rec.csv'
+# set up
+kri_id = 106
+url = "https://www.newyorkfed.org/medialibrary/media/research/capital_markets/allmonth.xls"
+download_path = "nyfed_yield_curve_model/allmonth.xls"
+output_file = "nyfed_yield_curve_model/nyfed_yield_curve_prob.csv"
+os.makedirs("nyfed_yield_curve_model", exist_ok=True)
 
-def fetch_nyfed_yield_curve_prob():
-    df = pd.read_csv(url, skiprows=4)
-    df = df.rename(columns=lambda x: x.strip())
-    df['DATE'] = pd.to_datetime(df['DATE'], errors='coerce')
-    df = df.dropna(subset=['DATE', 'P(REC)'])
-    df = df[['DATE', 'P(REC)']]
-    df["KEY_RISK_INDICATOR_ID"] = kri_id
-    output_file = 'nyfed_yield_curve_model/nyfed_yield_curve_prob.csv'
-    os.makedirs('nyfed_yield_curve_model', exist_ok=True)
-    df.to_csv(output_file, index=False)
-    print(f"NY Fed yield curve model data saved to {output_file}")
+# download Excel data
+response = requests.get(url)
+response.raise_for_status()
+with open(download_path, "wb") as f:
+    f.write(response.content)
+print("Downloaded allmonth.xls")
 
-if __name__ == "__main__":
-    fetch_nyfed_yield_curve_prob()
+# parse
+df = pd.read_excel(download_path, skiprows=5)
+df = df.dropna(subset=["YEAR", "MONTH", "PROBABILITY"])
+latest = df.iloc[-1]
+
+# format and save
+year = int(latest["YEAR"])
+month = int(latest["MONTH"])
+prob = float(latest["PROBABILITY"])
+date_label = f"{year}-{month:02}"
+
+output_df = pd.DataFrame([{
+    "DATE": date_label,
+    "PROBABILITY": prob,
+    "KEY_RISK_INDICATOR_ID": kri_id
+}])
+
+if os.path.isfile(output_file):
+    output_df.to_csv(output_file, mode='a', index=False, header=False)
+else:
+    output_df.to_csv(output_file, index=False)
+
+print(f"Saved NY Fed probability for {date_label} to {output_file}")
