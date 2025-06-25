@@ -2,40 +2,40 @@ import pandas as pd
 import os
 import requests
 
-# set up
-kri_id = 106
 url = "https://www.newyorkfed.org/medialibrary/media/research/capital_markets/allmonth.xls"
-download_path = "nyfed_yield_curve_model/allmonth.xls"
-output_file = "nyfed_yield_curve_model/nyfed_yield_curve_prob.csv"
-os.makedirs("nyfed_yield_curve_model", exist_ok=True)
+output_folder = "nyfed_yield_curve_model"
+xls_path = os.path.join(output_folder, "allmonth.xls")
+csv_path = os.path.join(output_folder, "recession_probabilities.csv")
+kri_id = 108
 
-# download Excel data
-response = requests.get(url)
-response.raise_for_status()
-with open(download_path, "wb") as f:
-    f.write(response.content)
-print("Downloaded allmonth.xls")
+def fetch_nyfed_yield_curve_prob():
+    os.makedirs(output_folder, exist_ok=True)
 
-# parse
-df = pd.read_excel(download_path, skiprows=5)
-df = df.dropna(subset=["YEAR", "MONTH", "PROBABILITY"])
-latest = df.iloc[-1]
+    # download the .xls file
+    response = requests.get(url)
+    with open(xls_path, "wb") as f:
+        f.write(response.content)
+    print("Downloaded allmonth.xls")
 
-# format and save
-year = int(latest["YEAR"])
-month = int(latest["MONTH"])
-prob = float(latest["PROBABILITY"])
-date_label = f"{year}-{month:02}"
+    # read and parse the file
+    df = pd.read_excel(xls_path)
 
-output_df = pd.DataFrame([{
-    "DATE": date_label,
-    "PROBABILITY": prob,
-    "KEY_RISK_INDICATOR_ID": kri_id
-}])
+    df = df.rename(columns={
+        "Date": "DATE",
+        "Rec_prob": "PROBABILITY"
+    })
 
-if os.path.isfile(output_file):
-    output_df.to_csv(output_file, mode='a', index=False, header=False)
-else:
-    output_df.to_csv(output_file, index=False)
+    # drop rows with missing probability
+    df = df.dropna(subset=["DATE", "PROBABILITY"])
 
-print(f"Saved NY Fed probability for {date_label} to {output_file}")
+    # clean percentage and convert
+    df["PROBABILITY"] = df["PROBABILITY"].str.rstrip('%').astype(float) / 100.0
+
+    df["KEY_RISK_INDICATOR_ID"] = kri_id
+    df = df[["DATE", "PROBABILITY", "KEY_RISK_INDICATOR_ID"]]
+
+    df.to_csv(csv_path, index=False)
+    print(f"Saved to {csv_path}")
+
+if __name__ == "__main__":
+    fetch_nyfed_yield_curve_prob()
