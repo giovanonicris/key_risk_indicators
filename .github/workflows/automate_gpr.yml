@@ -10,7 +10,7 @@ permissions:
   contents: write  # give write permission
 
 jobs:
-  fetch-gpr-data:
+  fetch-data:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
