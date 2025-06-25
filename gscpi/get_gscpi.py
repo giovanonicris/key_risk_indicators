@@ -26,7 +26,7 @@ def download_gscpi_data():
         df["KEY_RISK_INDICATOR_ID"] = kri_id
         
         # write CSV file to repo
-        output_file = 'supply_chain_pressure/gscpi_data.csv'
+        output_file = 'gscpi/gscpi_data.csv'
         df.to_csv(output_file, index=False)
         print(f"GSCPI data successfully saved to {output_file}")
     else:
