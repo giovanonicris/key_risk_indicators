@@ -38,4 +38,5 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git add gpr/gpr_data.csv
           git commit -m 'Update GPR data' || echo 'No changes to commit'
+          git pull --rebase origin main
           git push
