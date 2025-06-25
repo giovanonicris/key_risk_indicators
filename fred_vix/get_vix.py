@@ -5,8 +5,11 @@ kri_id = 106
 url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS'
 
 def fetch_vix_data():
-    df = pd.read_csv(url, parse_dates=['DATE'])
-    df = df.dropna()[['DATE', 'VIXCLS']]
+    df = pd.read_csv(url)
+    df = df[df['VIXCLS'] != '.']  # remove missing values
+    df['DATE'] = pd.to_datetime(df['DATE'])
+    df['VIXCLS'] = df['VIXCLS'].astype(float)
+    df = df[['DATE', 'VIXCLS']]
     df["KEY_RISK_INDICATOR_ID"] = kri_id
     output_file = 'fred_vix/vix_data.csv'
     os.makedirs('fred_vix', exist_ok=True)
