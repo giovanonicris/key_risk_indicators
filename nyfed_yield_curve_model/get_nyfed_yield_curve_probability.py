@@ -29,11 +29,16 @@ def fetch_nyfed_yield_curve_prob():
     df = df.dropna(subset=["DATE", "PROBABILITY"])
 
     # clean percentage and convert
-    df["PROBABILITY"] = df["PROBABILITY"].str.rstrip('%').astype(float) / 100.0
-
+    df["PROBABILITY"] = (
+        df["PROBABILITY"]
+        .astype(str)
+        .str.rstrip('%')
+        .replace('', pd.NA)
+        .astype(float) / 100.0
+    )
     df["KEY_RISK_INDICATOR_ID"] = kri_id
     df = df[["DATE", "PROBABILITY", "KEY_RISK_INDICATOR_ID"]]
-
+    #write
     df.to_csv(csv_path, index=False)
     print(f"Saved to {csv_path}")
 
