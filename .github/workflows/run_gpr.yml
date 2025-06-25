@@ -30,7 +30,7 @@ jobs:
           pip install -r geopolitics/requirements.txt
 
       - name: Fetch GPR data
-        run: python geopolitics/fetch_gpr.py
+        run: python fetch_gpr.py
 
       - name: Commit and push data
         run: |
