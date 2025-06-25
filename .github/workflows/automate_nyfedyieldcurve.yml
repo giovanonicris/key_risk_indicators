@@ -1,9 +1,9 @@
-name: Run GSCPI
+name: Run NY Fed Yield Curve
 
 on:
   # runs daily at 5AM EST
   schedule:
-    - cron: '0 10 * * *'  
+    - cron: '15 10 * * *'  
   workflow_dispatch:  # for manual runs
 
 permissions:
@@ -29,14 +29,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install --no-cache-dir -r requirements.txt
       
-      - name: Get GSCPI data
-        run: python gscpi/get_gscpi.py
+      - name: Get NY Fed Yield Curve data
+        run: python nyfed_yield_curve_model/get_nyfed_yield_curve_probability.py
       
       - name: Commit and push data
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add gscpi/gscpi_data.csv
-          git commit -m 'Update GSCPI data' || echo 'No changes to commit'
+          git add nyfed_yield_curve_model/nyfed_yield_curve_prob.csv
+          git commit -m 'Update data' || echo 'No changes to commit'
           git pull --rebase origin main
           git push
