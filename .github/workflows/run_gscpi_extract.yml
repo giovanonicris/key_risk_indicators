@@ -1,4 +1,4 @@
-name: Run GSCPI Data Extract
+name: Run GSCPI
 
 on:
   # runs daily at 5AM EST
