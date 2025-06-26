@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-kri_id = 106
+kri_id = 3
 url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS'
 
 def fetch_vix_data():
