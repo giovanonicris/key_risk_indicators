@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from dotenv import load_dotenv
 
-kri_id = 103
+kri_id = 5
 
 #set up
 load_dotenv()  # load variables from .env
