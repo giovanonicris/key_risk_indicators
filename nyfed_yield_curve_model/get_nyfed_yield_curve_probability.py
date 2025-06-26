@@ -2,12 +2,14 @@ import pandas as pd
 import os
 import requests
 
+#set up
 url = "https://www.newyorkfed.org/medialibrary/media/research/capital_markets/allmonth.xls"
 output_folder = "nyfed_yield_curve_model"
 xls_path = os.path.join(output_folder, "allmonth.xls")
 csv_path = os.path.join(output_folder, "recession_probabilities.csv")
-kri_id = 108
+kri_id = 2
 
+#fx to grab data
 def fetch_nyfed_yield_curve_prob():
     os.makedirs(output_folder, exist_ok=True)
 
