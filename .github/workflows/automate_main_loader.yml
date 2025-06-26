@@ -1,0 +1,44 @@
+name: Run All KRI Loaders
+
+on:
+  schedule:
+    - cron: '0 11 * * *'  # daily at 7:00 AM ET = UTC-4
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-data:
+    runs-on: ubuntu-latest
+    env:
+      FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Debug repository structure
+        run: ls -R
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --no-cache-dir -r requirements.txt
+
+      - name: Run all KRI loader scripts
+        run: python run_all_loaders.py
+
+      - name: Commit and push fact table
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add fact_kri_data.csv
+          git commit -m 'Update fact_kri_data.csv' || echo 'No changes to commit'
+          git pull --rebase origin main
+          git push
