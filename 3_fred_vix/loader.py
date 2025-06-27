@@ -15,3 +15,4 @@ def load_data():
     os.makedirs('fred_vix', exist_ok=True)
     df.to_csv('fred_vix/vix_data.csv', index=False)
     print("VIX data saved to fred_vix/vix_data.csv")
+    return df

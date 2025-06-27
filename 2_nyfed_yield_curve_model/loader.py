@@ -36,6 +36,7 @@ def load_data():
     df = df[["KRI_ID", "VALUE", "DATE"]]
     df.to_csv(csv_path, index=False)
     print(f"Saved to {csv_path}")
+    return df
 
 if __name__ == "__main__":
     load_data()

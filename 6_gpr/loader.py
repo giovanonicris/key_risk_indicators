@@ -24,3 +24,4 @@ def load_data():
     else:
         print(f"GPR data failed to download:{response.status_code}")
         exit(1)
+    return df

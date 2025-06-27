@@ -18,6 +18,7 @@ def load_data():
     t10y2y_df = t10y2y_df[["KRI_ID", "VALUE", "DATE"]]
     t10y2y_df.to_csv("fred_t10y2y/t10y2y.csv", index=False)
     print("Updated t10y-2y_data.csv")
+    return t10y2y_df
 
 if __name__ == "__main__":
     load_data()

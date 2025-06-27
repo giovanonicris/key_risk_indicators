@@ -18,3 +18,4 @@ def load_data():
     cumfns_df = cumfns_df[["KRI_ID", "VALUE", "DATE"]]
     cumfns_df.to_csv("fred_supplier_deliveries_index/cumfns.csv", index=False)
     print("Updated cumfns.csv")
+    return cumfns_df
