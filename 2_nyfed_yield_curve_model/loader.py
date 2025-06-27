@@ -8,7 +8,7 @@ xls_path = os.path.join(output_folder, "allmonth.xls")
 csv_path = os.path.join(output_folder, "recession_probabilities.csv")
 kri_id = 2
 
-def fetch_nyfed_yield_curve_prob():
+def load_data():
     os.makedirs(output_folder, exist_ok=True)
 
     response = requests.get(url)
@@ -38,4 +38,4 @@ def fetch_nyfed_yield_curve_prob():
     print(f"Saved to {csv_path}")
 
 if __name__ == "__main__":
-    fetch_nyfed_yield_curve_prob()
+    load_data()

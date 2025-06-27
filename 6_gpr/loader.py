@@ -5,7 +5,7 @@ from io import BytesIO
 kri_id = 6
 gpr_url = 'https://www.matteoiacoviello.com/gpr_files/data_gpr_export.xls'
 
-def download_gpr_data():
+def load_data():
     response = requests.get(gpr_url)
     if response.status_code == 200:
         data = BytesIO(response.content)
@@ -24,6 +24,3 @@ def download_gpr_data():
     else:
         print(f"GPR data failed to download:{response.status_code}")
         exit(1)
-
-if __name__ == "__main__":
-    download_gpr_data()

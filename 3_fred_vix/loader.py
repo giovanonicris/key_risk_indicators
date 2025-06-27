@@ -4,7 +4,7 @@ import os
 kri_id = 3
 url = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=VIXCLS'
 
-def fetch_vix_data():
+def load_data():
     df = pd.read_csv(url)
     df.columns = [col.strip().upper() for col in df.columns]
     df.rename(columns={"OBSERVATION_DATE": "DATE", "VIXCLS": "VALUE"}, inplace=True)
@@ -15,6 +15,3 @@ def fetch_vix_data():
     os.makedirs('fred_vix', exist_ok=True)
     df.to_csv('fred_vix/vix_data.csv', index=False)
     print("VIX data saved to fred_vix/vix_data.csv")
-
-if __name__ == "__main__":
-    fetch_vix_data()
